@@ -1,0 +1,29 @@
+# Understanding Latitude and Longitude
+
+**Q: What is Latitude?**
+
+A: Latitude is a measure of distance north or south of the equator, with the equator being at 0 degrees, the North Pole at 90 degrees north, and the South Pole at 90 degrees south.
+
+---
+
+**Q: What is Longitude?**
+
+A: Longitude is a measure of distance east or west of the Prime Meridian, which runs from the North Pole to the South Pole through Greenwich, England. It ranges from -180 degrees to +180 degrees.
+
+---
+
+**Q: How are Latitude and Longitude used together?**
+
+A: Latitude and Longitude are used together to specify precise points on the Earth's surface. Latitude gives the North-South position, and Longitude gives the East-West position.
+
+---
+
+**Q: What is an example of a location with its Latitude and Longitude coordinates?**
+
+A: New York City, for instance, is located at approximately 40.71 degrees latitude (North) and -74.01 degrees longitude (West).
+
+---
+
+**Q: What is the analogy for understanding Latitude and Longitude?**
+
+A: Think of Latitude and Longitude like a grid on a map or a game of "Battleship". Latitude lines run horizontally and give the North-South position, while Longitude lines run vertically and give the East-West position. The intersection of a specific Latitude and Longitude gives a precise point on the Earth's surface.

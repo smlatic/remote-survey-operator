@@ -1,35 +1,38 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog, messagebox
 from openpyxl import load_workbook, Workbook
 from collections import defaultdict
 import os
 
+def select_file():
+    filename = filedialog.askopenfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
+    file_entry.delete(0, tk.END)
+    file_entry.insert(0, filename)
+
 def main_program():
     filename = file_entry.get()
-    append_data = append_entry.get().lower()
+    append_data = append_var.get()
 
     # input validation
-    if not filename or not append_data:
-        messagebox.showerror("Error", "Please fill in all the fields")
+    if not filename:
+        messagebox.showerror("Error", "Please select an input file")
         return
 
     if not os.path.exists(filename):
         messagebox.showerror("Error", "The file doesn't exist")
         return
 
-    if append_data != 'yes' and append_data != 'no':
-        messagebox.showerror("Error", "Invalid append data input. Enter 'yes' or 'no'")
-        return
-
-    output_filename = "output.xlsx"  # default output filename
-
-    # check if we are appending to an existing excel file
-    append_to_existing = False
-    if append_data == 'yes':
+    if append_data:
         output_filename = filedialog.askopenfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
         if not output_filename:
             return
         append_to_existing = True
+    else:
+        output_filename = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
+        if not output_filename:
+            return
+        append_to_existing = False
 
     with open(filename, 'r') as f:
         lines = f.readlines()
@@ -92,34 +95,27 @@ def main_program():
         for borehole_num in sorted(data.keys()):
             ws.append([borehole_num + " Num lines", len(data[borehole_num]), "0", "", "", "", ""])
 
-    # handling output filename for
-    # handling output filename for new files
-    output_file_extension = ".xlsx"
-    output_counter = 1
-
-    while not append_to_existing and os.path.exists(output_filename):
-        output_filename = f"output{output_counter}{output_file_extension}"
-        output_counter += 1
-
-    # save the workbook
     wb.save(output_filename)
     messagebox.showinfo("Success", f"File saved successfully as {output_filename}")
 
 root = tk.Tk()
 root.title("Excel File Creator")
 
-# Define labels, entries and button
-file_label = tk.Label(root, text="Enter the name of the text file: ")
-file_entry = tk.Entry(root)
-append_label = tk.Label(root, text="Do you want to append to an existing file? (yes/no): ")
-append_entry = tk.Entry(root)
+# Define labels, entries, and button
+file_label = tk.Label(root, text="Select the input text file: ")
+file_entry = tk.Entry(root, width=50)
+file_button = tk.Button(root, text="Browse", command=select_file)
+append_label = tk.Label(root, text="Do you want to append to an existing file?")
+append_var = tk.BooleanVar()
+append_check = tk.Checkbutton(root, variable=append_var)
 run_button = tk.Button(root, text="Run", command=main_program)
 
 # Layout widgets
 file_label.grid(row=0, column=0, sticky="e")
 file_entry.grid(row=0, column=1)
+file_button.grid(row=0, column=2)
 append_label.grid(row=1, column=0, sticky="e")
-append_entry.grid(row=1, column=1)
-run_button.grid(row=2, column=0, columnspan=2)
+append_check.grid(row=1, column=1, sticky="w")
+run_button.grid(row=2, column=0, columnspan=3)
 
 root.mainloop()

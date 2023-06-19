@@ -14,7 +14,6 @@ def main_program():
     filename = file_entry.get()
     append_data = append_var.get()
 
-    # input validation
     if not filename:
         messagebox.showerror("Error", "Please select an input file")
         return
@@ -42,58 +41,68 @@ def main_program():
     if append_to_existing:
         wb = load_workbook(output_filename)  # load existing workbook
     else:
-        # initialize a new workbook
         wb = Workbook()
         wb.remove(wb.active)  # remove default sheet
 
     data_dict = defaultdict(lambda: defaultdict(list))
 
-    # parse lines
     for line in lines:
         if ',' in line:  # this line contains data
             name, layer = line.split(',')
             borehole_num = '_'.join(name.split('_')[:2])  # derive borehole number
             data_dict[layer][borehole_num].append(name)
 
-    # creating sheets and writing data
+    summary_data = []  # to store summary data
+
     for sheet_name, data in data_dict.items():
         if sheet_name in wb.sheetnames:
             ws = wb[sheet_name]
         else:
             ws = wb.create_sheet(sheet_name)
 
-        # add five empty rows for spacing
         for _ in range(5):
             ws.append([])
 
-        # get the maximum length of the column data
         max_length = max(len(col) for col in data.values())
 
-        # calculate total lines
         total_lines = sum(len(col) for col in data.values())
 
-        # add headers
         ws.append([f"{sheet_name} Borehole", "total lines", str(total_lines), "Completed", "0", "Remaining", str(total_lines)])
 
-        # add data to the worksheet
-        for i in range(max_length + 1):
+        for i in range(max_length+1):
             row = []
             for borehole_num in sorted(data.keys()):
                 if i == 0:
-                    row.append(borehole_num)  # add header
-                    row.append(None)  # add blank column for spacing
+                    row.append(borehole_num)
+                    row.append(None)
                 else:
                     if i <= len(data[borehole_num]):
-                        row.append(data[borehole_num][i - 1])
-                        row.append(None)  # add blank column for spacing
+                        row.append(data[borehole_num][i-1])
+                        row.append(None)
                     else:
                         row.append("")
-                        row.append(None)  # add blank column for spacing
+                        row.append(None)
             ws.append(row)
 
-        # add footer
         for borehole_num in sorted(data.keys()):
             ws.append([borehole_num + " Num lines", len(data[borehole_num]), "0", "", "", "", ""])
+
+        summary_data.append((sheet_name, len(data.keys()), total_lines))  # add summary data
+
+    if 'Summary' in wb.sheetnames:
+        ws_summary = wb['Summary']
+    else:
+        ws_summary = wb.create_sheet('Summary', 0)
+
+    ws_summary.append(["File: " + os.path.basename(filename), "", ""])  # add header for the file
+
+    # write the new summary data
+    for row in summary_data:
+        ws_summary.append(list(row))
+
+    # Add 3 empty rows after each summary
+    for _ in range(3):
+        ws_summary.append([])
 
     wb.save(output_filename)
     messagebox.showinfo("Success", f"File saved successfully as {output_filename}")
@@ -101,7 +110,6 @@ def main_program():
 root = tk.Tk()
 root.title("Excel File Creator")
 
-# Define labels, entries, and button
 file_label = tk.Label(root, text="Select the input text file: ")
 file_entry = tk.Entry(root, width=50)
 file_button = tk.Button(root, text="Browse", command=select_file)
@@ -110,7 +118,6 @@ append_var = tk.BooleanVar()
 append_check = tk.Checkbutton(root, variable=append_var)
 run_button = tk.Button(root, text="Run", command=main_program)
 
-# Layout widgets
 file_label.grid(row=0, column=0, sticky="e")
 file_entry.grid(row=0, column=1)
 file_button.grid(row=0, column=2)

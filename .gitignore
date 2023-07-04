@@ -159,3 +159,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 Logger/Onlinelog.xlsm
+Logger/Boreholes_RunLines_20230617.txt
+Logger/CPT_RunLines_20230617.txt
+Logger/log2.xlsm
